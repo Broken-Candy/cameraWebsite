@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Camera</title>
+    <link rel="stylesheet" href="styles4.css">
+    
+</head>
+<body>
+    <header>
+        <h1>Add Details of New Camera</h1>
+    </header>
+    <main>
+        <form id="login-form">
+            <label for="Camera No">Camera No</label>
+            <input type="text" id="cam_no" name="camno" required placeholder="Enter the Camera No">
+            
+            <label for="loc">Location</label>
+            <input type="text" id="location" name="location" required placeholder="Enter the Location">
+            
+            <label for="latitude">Latitude</label>
+            <input type="text" id="latitude" name="latitude" required placeholder="Enter Latitude">
+            
+            <label for="longitude">Longitude</label>
+            <input type="text" id="longitude" name="longitude" required placeholder="Enter Longitude">
+            
+            <button class="btn" id="submitLogIn" type="submit">Add Camera</button>
+        </form>
+    </main>
+    <div class="an">
+        <a href="index.html">Back</a>
+    </div>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5odFpXeE_tXrREBWeYcIXMu5a4B3EQQo",
+            authDomain: "license-plate-recognition--web.firebaseapp.com",
+            projectId: "license-plate-recognition--web",
+            storageBucket: "license-plate-recognition--web.appspot.com",
+            messagingSenderId: "515853944080",
+            appId: "1:515853944080:web:42f0fe6e5f38f02b0cd195",
+            measurementId: "G-K4EZRGVRMR",
+            databaseURL: "https://license-plate-recognition--web-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const camNo = document.getElementById('cam_no').value;
+            const location = document.getElementById('location').value;
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+
+            const cameraRef = ref(database, 'cameras');
+            push(cameraRef, { camNo, location, latitude, longitude })
+                .then(() => {
+                    alert('Camera details added successfully!');
+                    document.getElementById('login-form').reset();
+                })
+                .catch((error) => {
+                    console.error('Error adding camera details:', error);
+                    alert('Failed to add camera details.');
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera History</title>
+    <link rel="stylesheet" href="styles5.css">
+</head>
+<body>
+    <header>
+        <h1>Existing Cameras</h1>
+    </header>
+    <main>
+        <section class="section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Camera No</th>
+                        <th>Location</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        <a href="index.html" class="button">Back</a>
+    </section>
+    </main>
+
+    <!-- Firebase Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5odFpXeE_tXrREBWeYcIXMu5a4B3EQQo",
+            authDomain: "license-plate-recognition--web.firebaseapp.com",
+            projectId: "license-plate-recognition--web",
+            storageBucket: "license-plate-recognition--web.appspot.com",
+            messagingSenderId: "515853944080",
+            appId: "1:515853944080:web:42f0fe6e5f38f02b0cd195",
+            measurementId: "G-K4EZRGVRMR",
+            databaseURL: "https://license-plate-recognition--web-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        const cameraRef = ref(database, 'cameras');
+        const table = document.querySelector('table');
+
+        onValue(cameraRef, (snapshot) => {
+            const cameras = snapshot.val();
+            table.innerHTML = `
+                <tr>
+                    <th>Camera No</th>
+                    <th>Location</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                </tr>
+            `;
+
+            if (cameras) {
+                Object.values(cameras).forEach(({ camNo, location, latitude, longitude }) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${camNo}</td>
+                        <td>${location}</td>
+                        <td>${latitude}</td>
+                        <td>${longitude}</td>
+                    `;
+                    table.appendChild(row);
+                });
+            } else {
+                table.innerHTML += '<tr><td colspan="4">No data available</td></tr>';
+            }
+        });
+    </script>
+</body>
+</html>
